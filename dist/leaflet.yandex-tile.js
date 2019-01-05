@@ -4,6 +4,8 @@
 
 /* global ymaps: true */
 
+import ymaps from 'ymaps';
+
 (function(L){
 
   L.Yandex = L.Layer.extend({
