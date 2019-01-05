@@ -67,6 +67,9 @@ import ymaps from 'ymaps';
       this._map = map
       this._insertAtTheBottom = insertAtTheBottom
 
+      this._map.options.maxZoom = this.options.maxZoom
+      this._map.options.minZoom = this.options.minZoom
+
       // create a container div for tiles
       this._initContainer()
       this._initMapObject()
