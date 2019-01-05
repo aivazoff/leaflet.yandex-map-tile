@@ -8,6 +8,9 @@ import ymaps from 'ymaps';
 
 (function(L){
 
+  const YMAPS_SRC = 'https://api-maps.yandex.ru/2.1/?lang=ru-RU'
+  ymaps.load(YMAPS_SRC)
+
   L.Yandex = L.Layer.extend({
     includes: L.Events,
 
@@ -143,46 +146,50 @@ import ymaps from 'ymaps';
     {
       if(this._yandex) return
 
-      // Check that ymaps.Map is ready
-      if(ymaps.Map === undefined)
-      {
-        return ymaps.load(['package.map'], this._initMapObject, this)
-      }
+      ymaps.load(YMAPS_SRC).then(maps => {
 
-      // If traffic layer is requested check if control.TrafficControl is ready
-      if(this.options.traffic)
-      {
-        if(ymaps.control === undefined ||
-          ymaps.control.TrafficControl === undefined)
+        // Check that ymaps.Map is ready
+        if(maps.Map === undefined)
         {
-          return ymaps.load(['package.traffic', 'package.controls'],
-            this._initMapObject, this)
+          return maps.load(['package.map'], this._initMapObject, this)
         }
-      }
-      //Creating ymaps map-object without any default controls on it
-      let map = new ymaps.Map(this._container, {
-        center: [0, 0],
-        behaviors: [],
-        controls: [],
-        zoom: 0
-      }, Object.assign({}, this.options.ymapsOpts))
 
-      if(this.options.traffic) {
-        map.controls.add(new ymaps.control.TrafficControl({shown: true}))
-      }
+        // If traffic layer is requested check if control.TrafficControl is ready
+        if(this.options.traffic)
+        {
+          if(maps.control === undefined ||
+            maps.control.TrafficControl === undefined)
+          {
+            return maps.load(['package.traffic', 'package.controls'],
+              this._initMapObject, this)
+          }
+        }
+        //Creating ymaps map-object without any default controls on it
+        let map = new maps.Map(this._container, {
+          center: [0, 0],
+          behaviors: [],
+          controls: [],
+          zoom: 0
+        }, Object.assign({}, this.options.ymapsOpts))
 
-      if(this._type === 'yandex#null')
-      {
-        this._type = new ymaps.MapType('null', [])
-        map.container.getElement().style.background = 'transparent'
-      }
-      map.setType(this._type)
+        if(this.options.traffic) {
+          map.controls.add(new maps.control.TrafficControl({shown: true}))
+        }
 
-      this._yandex = map
-      this._update(true)
+        if(this._type === 'yandex#null')
+        {
+          this._type = new maps.MapType('null', [])
+          map.container.getElement().style.background = 'transparent'
+        }
+        map.setType(this._type)
 
-      //Reporting that map-object was initialized
-      this.fire('MapObjectInitialized', {mapObject: map})
+        this._yandex = map
+        this._update(true)
+
+        //Reporting that map-object was initialized
+        this.fire('MapObjectInitialized', {mapObject: map})
+
+      })
     },
 
     _reset: function() {
@@ -220,5 +227,3 @@ import ymaps from 'ymaps';
   })
 
 })(window.L)
-
-
