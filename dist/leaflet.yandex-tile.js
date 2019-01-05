@@ -14,7 +14,8 @@
       maxZoom: 18,
       attribution: '',
       opacity: 1,
-      traffic: false
+      traffic: false,
+      ymapsOpts: {}
     },
 
     possibleShortMapTypes: {
@@ -157,7 +158,12 @@
         }
       }
       //Creating ymaps map-object without any default controls on it
-      let map = new ymaps.Map(this._container, {center: [0, 0], zoom: 0, behaviors: [], controls: []})
+      let map = new ymaps.Map(this._container, {
+        center: [0, 0],
+        behaviors: [],
+        controls: [],
+        zoom: 0
+      }, Object.assign({}, this.options.ymapsOpts))
 
       if(this.options.traffic) {
         map.controls.add(new ymaps.control.TrafficControl({shown: true}))
@@ -212,4 +218,5 @@
   })
 
 })(window.L)
+
 
